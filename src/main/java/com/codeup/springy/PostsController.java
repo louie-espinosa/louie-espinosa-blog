@@ -1,10 +1,7 @@
 package com.codeup.springy;
 
 import data.Post;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,14 +33,22 @@ public class PostsController {
 
     }
 
-    //    This method will return a single Post object
-    //
-    //    It will accept GET requests on api/posts/{id}
-    //
-    //    getById() has one parameter mapped by @PathVariable to the route's {id}.
-    //        The parameter is of type Long and is named id.
-    //
-    //    Create and return a new Post object with all fields populated.
+    private List<Post> posts = new ArrayList<>(); // make a method which populates this list after
+
+    //US2-A: Make createPost() & use @PostMapping to allow POST requests/responses to be handled in PostsController
+    @PostMapping
+    private void createPost(@RequestBody Post incomingPost) {
+        System.out.println("Here is your post: " + incomingPost);
+    }
+    @PutMapping("{id}")
+    private void updatePost(@PathVariable Long id, @RequestBody Post incomingPost) {
+        System.out.println("Here is your edited post: " + incomingPost);
+    }
+    //1. Set up the method signature much like updatePost() and createPost().
+    @DeleteMapping("{id}")
+    private void deletePost(@PathVariable Long id) {
+        System.out.println("Your post at id: " + id + " has been deleted.");
+    }
 
 }
 
