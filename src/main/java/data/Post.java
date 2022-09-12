@@ -1,5 +1,7 @@
 package data;
 
+import lombok.NoArgsConstructor;
+
 public class Post {
     private Long id;
     private String title;

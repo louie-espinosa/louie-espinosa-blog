@@ -1,0 +1,25 @@
+.bg-img {
+    z-index: -1000;
+
+}
+.fancy_header {
+    font-family: "Andale Mono", serif;
+}
+
+h3 {
+    font-family: "American Typewriter", serif;
+    text-decoration: yellowgreen;
+}
+.float-r {
+    float: right;
+}
+#label {
+    font-family: "Andale Mono", sans-serif;
+    width: 20%;
+}
+
+.btn {
+    font-family: "American Typewriter", serif;
+    background-color: dodgerblue;
+    text-decoration-color: aliceblue;
+}

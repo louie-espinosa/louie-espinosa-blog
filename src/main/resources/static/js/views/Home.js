@@ -1,6 +1,7 @@
 export default function Home(props) {
     console.log("The frontend did it. HER FAULT");
     return `
+        <img src="img/Eckleberg.jpg" alt="close up of ominous man with glasses on tattered billboard">
         <header>
             <h1>Home Page</h1>
         </header>
