@@ -17,8 +17,13 @@ import java.util.List;
         @GetMapping("")
         private Category getPostsByCategories(@RequestParam String categoryName) {
             Category fakeCat1 = new Category(1L, categoryName, null);
-            ArrayList<Post> posts = new ArrayList<>();
+
+            ArrayList<Post> fakePosts = new ArrayList<>();
             //make new post, then add to arraylist, then fakeCat1.setPosts, ACP
+            fakePosts.add(new Post(1L, "Bunnies taste yummy", "for real", null, null));
+            fakePosts.add(new Post(1L, "Horses love oats", "for really", null, null));
+            fakeCat1.setPosts(fakePosts);
+
             return fakeCat1;
         }
     }

@@ -1,5 +1,6 @@
 package com.codeup.springy;
 
+import data.Category;
 import data.Post;
 import data.User;
 import data.UserRole;
@@ -45,9 +46,14 @@ public class PostsController {
         fakeAuthor.setUsername("Fake Author");
         fakeAuthor.setEmail("FA@stuff.com");
         incomingPost.setAuthor(fakeAuthor);
+        //make some fake categories and put them into new post
+        Category cat1 = new Category(1L, "horny", null);
+        Category cat2 = new Category(1L, "bunny", null);
+        incomingPost.setCategories(new ArrayList<>());
+        incomingPost.getCategories().add(cat1);
+        incomingPost.getCategories().add(cat2);
+
         nextId++;
-
-
         blogs.add(incomingPost);
     }
     //will have two pieces of info: request body, and path variable
