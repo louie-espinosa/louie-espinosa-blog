@@ -1,5 +1,7 @@
 import CreateView from "../createView.js";
 
+let posts;
+
 export default function PostIndex(props) {
     const postsHTML = generatePostsHTML(props.posts);
     //save this for loading edits later
@@ -47,6 +49,7 @@ function generatePostsHTML(posts) {
         postsHTML += `<tr>
         <td>${post.title}</td>
         <td>${post.content}</td>
+        <td>${post.author.username}</td>
         <td><button data-id=${post.id} class="button btn-primary editPost">Edit</button></td>
         <td><button data-id=${post.id} class="button btn-danger">Delete</button></td>
         </tr>`;
@@ -96,7 +99,33 @@ function editPostHandlers() {
     //add click handler to all edit buttons
     for (let i = 0; i < editButtons.length; i++) {
         editButtons[i].addEventListener("click", function (event) {
-            alert("post has been edited!")
+
+            //get the id of the post from the delete button
+            const postId = parseInt(this.getAttribute("data-id"));
+            //go find the post in the posts data that matches the postId
+            const post = findPostById(postId);
+            if(!post) {
+                console.log("did not find post for id" + postId);
+                return;
+            }
+            //load the post data into the form
+            const titleField = document.querySelector("#title");
+            const contentfield = document.querySelector("#content");
+            titleField.value = post.title
+            contentField.value = post.content
+
+            const saveButton  = document.querySelector("#savePost");
+            saveButton.setAttribute("data-id", postId);
+
+            function findPostById(postId) {
+                for (let i = 0; i < posts.length; i++) {
+                    if(posts[i].id === postId) {
+                        return posts[i];
+                    }
+                }
+                //didnt find it so return saomthing falsy
+                return false;
+            }
 
             let request = {
                 method: "PUT",

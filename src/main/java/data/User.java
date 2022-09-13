@@ -3,6 +3,7 @@ package data;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.Collection;
 
 @Getter
 @Setter
@@ -19,4 +20,5 @@ public class User {
     private LocalDate createdAt;
     private UserRole role;
 
+    private Collection<Post> posts;
 }

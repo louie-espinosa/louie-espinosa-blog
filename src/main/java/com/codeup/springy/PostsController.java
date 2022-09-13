@@ -1,8 +1,11 @@
 package com.codeup.springy;
 
 import data.Post;
+import data.User;
+import data.UserRole;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,18 +14,14 @@ import java.util.List;
 @RequestMapping(value = "/api/posts", headers = "Accept=application/json")
 public class PostsController {
     private List<Post> blogs = new ArrayList<>();
-    private long nextId = 1;
+
+    private long nextId = 2;
 
     @GetMapping("")
     private List<Post> fetchAll() {
-        // In fetchAll(), let's make a list of Post objects and add 2-3 posts to that list with believable values.
-//        blogs.add(new Post(1L, "Dont arrest me", "Someone was arrest at Codeup today, and it was very upsetting. They should have been more professional and allowed him to walk down stairs"));
-//        blogs.add(new Post(2L, "Masks don't work", "Masks are made for highly sanitized operating rooms, but not for environments outside of those settings among people aren't surgical professionals"));
-//        blogs.add(new Post(3L, "Currency is NOT money", "Money must be a store of value over a long period of time, whereas currencies leak your purchasing power due to reckless monetary policy. One example of reckless policy is Quantitative easing, which is a fancy term for currency creation"));
-        //Now, return that list to fulfil the return expectation of the method.
         return blogs;
     }
-    //Using examples from above, create another public method in PostsController named getById()
+
     @GetMapping("{id}")
     public Post getBlogById(@PathVariable Long id) {
     //search through the list of posts and return the post that matches the given id
@@ -37,7 +36,15 @@ public class PostsController {
     @PostMapping("")
     private void createPost(@RequestBody Post incomingPost) {
         //System.out.println("Here is your post: " + incomingPost);
+
         incomingPost.setId(nextId);
+
+        //assign a fake author of the post
+        User fakeAuthor = new User();
+        fakeAuthor.setId(99);
+        fakeAuthor.setUsername("Fake Author");
+        fakeAuthor.setEmail("FA@stuff.com");
+        incomingPost.setAuthor(fakeAuthor);
         nextId++;
 
 
