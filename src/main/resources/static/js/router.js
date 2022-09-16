@@ -7,7 +7,7 @@ import Login from "./views/Login.js";
 import LoginEvent from "./auth.js";
 import Register from "./views/Register.js"
 import {RegisterEvent} from "./views/Register.js";
-
+import userScreenHTML, {prepareUserJS} from "./views/User.js";
 /**
  * Returns the route object for a specific route based on the given URI
  * @param URI
@@ -63,6 +63,15 @@ export default function router(URI) {
             uri: location.pathname,
             title: 'Loading...',
         }
+        // '/user': {//I set this up on sept 14
+        //     returnView: userScreenHTML,
+        //     state: {
+        //         users: '/api/user',
+        //     },
+        //     uri: '/user',
+        //     title: 'User',
+        //     viewEvent: prepareUserJS
+        // },
     };
 
     return routes[URI];
