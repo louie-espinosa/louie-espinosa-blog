@@ -10,7 +10,7 @@ import java.util.Collection;
 @AllArgsConstructor
 @Getter
 @Setter
-@ToString
+//@ToString
 @Entity
 @Table(name="posts")
 //class names are singular, and table names are plural

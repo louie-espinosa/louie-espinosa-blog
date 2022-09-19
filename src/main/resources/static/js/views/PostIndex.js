@@ -9,7 +9,7 @@ export default function PostIndex(props) {
 
     return `
         <header>
-            <h1 style="text-align: center" >Posts Page</h1>
+            <h1 style="text-align: center">Posts Page</h1>
         </header>
         <main>
             <h3>Lists of Posts</h3>
@@ -20,11 +20,8 @@ export default function PostIndex(props) {
             <h3>Add a Post</h3>
             <form>
                 <label for="title">Title</label><br>
-                <!--want validation here-->
                 <input id="title" style="width: 20%" name="title" type="text" placeholder="Enter a title"> <br>
-                
-                <label for="author">Author</label><br>
-                <input id="author" style="width: 20%" name="author" type="text" placeholder="Enter author name"> <br>
+               
                 
                 <label for="category">Category</label><br>
                 <input id="category" style="width: 20%" name="category" type="text" placeholder="Enter a category"> <br>
@@ -65,7 +62,7 @@ function generatePostsHTML(posts) {
         }
         let authorName = "";
         if(post.author) {
-            authorName = post.author.name;
+            authorName = post.author.username;
         }
         postsHTML += `<tr>
         <td>${post.title}</td>
@@ -90,30 +87,52 @@ export function postSetup() {
 
 function savePostHandler() {
     const saveButton = document.querySelector("#savePost")
-    saveButton.addEventListener("click", function(event) {
-        const titleField = document.querySelector("#title");
-        const contentfield = document.querySelector("#content");
-
-        //make the new/saved-edit post object
-        let newPost = {
-            title: titleField.value,
-            content: contentfield.value
-        }
-        console.log(newPost);
-        //Make the request
-        let request = {
-            method: "POST",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify(newPost)
-        }
-
-        fetch(POST_API_BASE_URL, request)
-            .then(response => {
-                console.log(response.status);
-                CreateView("/posts");
-            })
+    saveButton.addEventListener("click", function (event) {
+        const postId = parseInt(this.getAttribute("data-id"));
+        savePost(postId);
     });
-}//end of savePostHandler
+}
+
+        function savePost(postId) {
+            //get the title and content for the new/updated post
+
+            const titleField = document.querySelector("#title");
+            const contentField = document.querySelector("#content");
+            const categoryField = document.querySelector("#category");
+
+            //make the new/saved-edit post object
+            const incomingPost = {
+                title: titleField.value,
+                content: contentField.value,
+                category: categoryField.value
+            }
+
+            //Make the request
+            let request = {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify(incomingPost)
+            }
+            //if we are updating a post, change the request and url
+            let url = POST_API_BASE_URL;
+
+            if (postId > 0) {
+                request.method = "PUT";
+                url += `/${postId}`;
+            }
+
+            fetch(url, request)
+                .then(response => {
+                    if (response.status !== 200) {
+                        console.log("fetch returned bad status code " + response.status);
+                        console.log(response.statusText);
+                        return;
+                    }
+                    CreateView("/posts");
+                })
+        }
+//end of savePostHandler
+
 
 function editPostHandlers() {
     //target all edit button
@@ -139,8 +158,12 @@ function loadPostIntoForm(postId) {
     //load the post data into the form
     const titleField = document.querySelector("#title");
     const contentField = document.querySelector("#content");
+
+    const categoryField = document.querySelector("#category")
     titleField.value = post.title
     contentField.value = post.content
+
+    categoryField.value = post.category
 
     const saveButton  = document.querySelector("#savePost");
     saveButton.setAttribute("data-id", postId);

@@ -7,7 +7,9 @@ import com.codeup.springy.repositories.CategoriesRepositories;
 import com.codeup.springy.repositories.PostsRepository;
 import com.codeup.springy.data.User;
 import com.codeup.springy.repositories.UsersRepository;
+import com.codeup.springy.services.EmailService;
 import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -16,22 +18,18 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
+//IMPORTANT NOTE: The NoArgsConstructor prohibited me from connecting to the front end. Deleted and everything worked!
 @AllArgsConstructor
 @RestController
-@RequestMapping(value = "/api/posts", headers = "Accept=application/json")
+@RequestMapping(value = "/api/posts", produces = "application/json")
 public class PostsController {
-
+    private final EmailService emailService;
    private PostsRepository postsRepository;
-
    private UsersRepository usersRepository;
-
    private CategoriesRepositories categoriesRepositories;
 
-
-
     @GetMapping("")
-    public List<Post> fetchAll() {
+    public List<Post> fetchPosts() {
         return postsRepository.findAll();
     }
 
@@ -46,7 +44,7 @@ public class PostsController {
 
 
     @PostMapping("")
-    private void createPost(@RequestBody Post incomingPost) {
+    public void createPost(@RequestBody Post incomingPost) {
         //System.out.println("Here is your post: " + incomingPost);
         //assign a fake author of the post
         User fakeAuthor = usersRepository.findById(1L).get();
@@ -60,10 +58,12 @@ public class PostsController {
         incomingPost.getCategories().add(cat2);
 
         postsRepository.save(incomingPost);
+
+        emailService.prepareAndSend(incomingPost, "THE VERY FIRST POST", "If this works for you, celebrate good times, c'mon!");
     }
     //will have two pieces of info: request body, and path variable
     @PutMapping("{id}")
-    private void updatePost(@PathVariable Long id, @RequestBody Post updatedPost) {
+    public void updatePost(@PathVariable Long id, @RequestBody Post updatedPost) {
 
         Optional<Post> originalPost = postsRepository.findById(id);
         if(originalPost.isEmpty()) {
@@ -96,7 +96,7 @@ public class PostsController {
     }
     //1. Set up the method signature much like updatePost() and createPost().
     @DeleteMapping("{id}")
-    private void deletePostById(@PathVariable Long id) {
+    public void deletePostById(@PathVariable Long id) {
         Optional<Post> optionalPost = postsRepository.findById(id);
         if(optionalPost.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Post id " + id + " not found");

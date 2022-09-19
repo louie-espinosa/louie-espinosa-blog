@@ -3,10 +3,12 @@ package com.codeup.springy.controllers;
 
 import com.codeup.springy.data.User;
 import com.codeup.springy.controllers.misc.FieldHelper;
+import com.codeup.springy.data.UserRole;
 import com.codeup.springy.repositories.UsersRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -22,6 +24,8 @@ import java.util.Optional;
 public class UsersController {
 
     private UsersRepository usersRepository;
+
+    private PasswordEncoder passwordEncoder;
 
 //    public UsersController(UsersRepository usersRepository) {//this is IntelliJ built constructor, replaced by using lombok annotation
 //        this.usersRepository = usersRepository;
@@ -103,10 +107,14 @@ public class UsersController {
 
     @PostMapping("/create")
     public void createUser(@RequestBody User newUser) {
-//        System.out.println(newPost);
-        // assign  nextId to the new post
-       newUser.setCreatedAt(LocalDate.now());
-       usersRepository.save(newUser);
+        // TODO: validate new user fields
+        newUser.setRole(UserRole.USER);
+        String plainTextPassword = newUser.getPassword();
+        String encryptedPassword = passwordEncoder.encode(plainTextPassword);
+        newUser.setPassword(encryptedPassword);
+
+        newUser.setCreatedAt(LocalDate.now());
+        usersRepository.save(newUser);
     }
 
     @DeleteMapping("/{id}")

@@ -14,7 +14,7 @@ import java.util.Collection;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
+//@ToString
 @Entity
 //without annotating like this: @Table(name="users") the table will be generated all lower case of the class name
 public class User {
