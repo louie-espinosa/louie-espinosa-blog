@@ -12,6 +12,7 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -44,11 +45,16 @@ public class PostsController {
 
 
     @PostMapping("")
-    public void createPost(@RequestBody Post incomingPost) {
+    public void createPost(@RequestBody Post incomingPost, OAuth2Authentication auth) {
         //System.out.println("Here is your post: " + incomingPost);
         //assign a fake author of the post
-        User fakeAuthor = usersRepository.findById(1L).get();
-        incomingPost.setAuthor(fakeAuthor);
+        //User fakeAuthor = usersRepository.findById(1L).get();//dont need these two lines anymore because its static, lets insert the actual user
+        //incomingPost.setAuthor(fakeAuthor);
+        String username = auth.getName();
+
+        User author = usersRepository.findByUsername(username);
+        incomingPost.setAuthor(author);
+
         incomingPost.setCategories(new ArrayList<>());
 
         Category cat1 = categoriesRepositories.findById(1L).get();

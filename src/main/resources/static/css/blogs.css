@@ -23,3 +23,15 @@ h3 {
     background-color: dodgerblue;
     text-decoration-color: aliceblue;
 }
+.container {
+    display: flex;
+    width: 40%;
+    margin: 10px 0;
+
+}
+.form {
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+    margin-left: 37%;
+}

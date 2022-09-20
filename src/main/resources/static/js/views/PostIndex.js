@@ -1,4 +1,5 @@
 import CreateView from "../createView.js";
+import {getHeaders} from "../auth.js";
 
 let posts;
 
@@ -19,12 +20,16 @@ export default function PostIndex(props) {
 
             <h3>Add a Post</h3>
             <form>
+                <label for="category">Category</label><br>
+                <select name="category" id="category">
+                  <option value="politics">Politics</option>
+                  <option value="religion">Religion</option>
+                  <option value="technology">Technology</option>
+                  <option value="current affairs">Current Affairs</option>
+                </select> <br>
+            
                 <label for="title">Title</label><br>
                 <input id="title" style="width: 20%" name="title" type="text" placeholder="Enter a title"> <br>
-               
-                
-                <label for="category">Category</label><br>
-                <input id="category" style="width: 20%" name="category" type="text" placeholder="Enter a category"> <br>
                 
                 <label id="label" for="content">Content</label> <br>
                 <textarea id="content" name="content" rows="10" cols="50" placeholder="Enter text"></textarea>
@@ -62,7 +67,7 @@ function generatePostsHTML(posts) {
         }
         let authorName = "";
         if(post.author) {
-            authorName = post.author.username;
+            authorName = post.author.username; //username is the column name for the user table
         }
         postsHTML += `<tr>
         <td>${post.title}</td>
@@ -110,7 +115,7 @@ function savePostHandler() {
             //Make the request
             let request = {
                 method: "POST",
-                headers: {"Content-Type": "application/json"},
+                headers: getHeaders(),
                 body: JSON.stringify(incomingPost)
             }
             //if we are updating a post, change the request and url
@@ -193,7 +198,7 @@ function deletePostHandlers() {
             function deletePost(postId) {
                 const request = {
                     method: "DELETE",
-                    headers: {"Content-Type": "application/json"},
+                    headers: getHeaders(),
                 }
                 const url = POST_API_BASE_URL + `/${postId}`;
                 fetch(url, request)
