@@ -1,6 +1,12 @@
 import CreateView from "../createView.js"
+import {isLoggedIn} from "../auth.js";
+import createView from "../createView.js";
 
 export default function Register(props) {
+    if(isLoggedIn()) {
+        createView("/");
+        return;
+    }
     return `
     <!DOCTYPE html>
         <html>
@@ -25,13 +31,15 @@ export default function Register(props) {
                     
                     <div>
                     <br>
-                    <a href="http://localhost:8080/login">Already Registered/ Return to login</a>
+                    <a href="/login" data-link>Already Registered/ Return to login</a>
+                    <!--The data-link attribute is REQUIRED in Jalopy to make a link clickable -->
                     </div>
                     
                 </form>
             </body>
         </html>
 `;
+
 }
 
 export function RegisterEvent(){

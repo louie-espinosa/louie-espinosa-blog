@@ -35,3 +35,8 @@ h3 {
     align-content: center;
     margin-left: 37%;
 }
+.about-bg {
+    background-image: url("../img/AKT.jpg");
+    height: 80vh;
+    background-size: cover;
+}

@@ -1,12 +1,20 @@
 import CreateView from "../createView.js";
-import {getHeaders} from "../auth.js";
+import {getHeaders, getUser, isLoggedIn} from "../auth.js";
 
 let posts;
+let loggedInUser;
+let categories;
 
 export default function PostIndex(props) {
+    //refresh the currently logged-in user
+    loggedInUser = getUser();
+
     const postsHTML = generatePostsHTML(props.posts);
     //save this for loading edits later
     posts = props.posts;
+    categories = props.category;
+
+    const addPostHTML = generateAddPostsHTML;
 
     return `
         <header>
@@ -17,9 +25,28 @@ export default function PostIndex(props) {
             <div>
                 ${postsHTML}
             </div>
+            
+            ${addPostHTML}
+            
+        </main>
+    `;
+}
+
+function generateAddPostHTML() {
+    let addHTML = ``;
+
+    if(isLoggedIn()) {
+        return addHTML;
+    }
+
+    const categoryHTML = generateCategoryHTML(categories);
+
+    addHTML = `
+
 
             <h3>Add a Post</h3>
             <form>
+            <div>
                 <label for="category">Category</label><br>
                 <select name="category" id="category">
                   <option value="politics">Politics</option>
@@ -30,14 +57,49 @@ export default function PostIndex(props) {
             
                 <label for="title">Title</label><br>
                 <input id="title" style="width: 20%" name="title" type="text" placeholder="Enter a title"> <br>
-                
+                <div class="invalid-feedback">
+                    Title cannot be blank
+                </div>
+                <div class="valid-feedback">
+                    Your title is ok!
+                </div>
+            </div>
+            <div>    
                 <label id="label" for="content">Content</label> <br>
                 <textarea id="content" name="content" rows="10" cols="50" placeholder="Enter text"></textarea>
+                <div class="invalid-feedback">
+                    Content cannot be blank
+                </div>
+                <div class="valid-feedback">
+                    Your content is ok!
+                </div>
                 <br>
                 <button data-id="0" id="savePost" name="savePost" class="button btn-primary">Add/Edit Post</button>
-            </form>
-        </main>
-    `;
+            </div>
+            
+            <h6 class="my-category-group">Categories</h6>
+            ${categoryHTML}
+            
+             <button data-id="0" id="savePost" name="savePost" type="button" class="my-button button btn-primary">Save Post</button>
+            </form>`;
+
+    return addHTML;
+}
+
+function generateCategoryHTML(categories) {
+    let catHTML = ``;
+    for(let i = 0; i < categories.length; i++) {
+        const category = categories[i];
+
+        catHTML += `
+        <div class="form-check">
+            <input class="form-check-input category-checkbox" type="checkbox" value="" data-id="${category.id}" id="category_${category.id}">
+            <label class="form-check-label" for="flexCheckDefault">
+                ${category.name}
+            </label>
+        </div>`;
+    }
+    return catHTML;
 }
 
 function generatePostsHTML(posts) {
@@ -69,13 +131,24 @@ function generatePostsHTML(posts) {
         if(post.author) {
             authorName = post.author.username; //username is the column name for the user table
         }
-        postsHTML += `<tr>
+        postsHTML = `<tr>
+        
         <td>${post.title}</td>
         <td>${post.content}</td>
         <td>${categories}</td>
         <td>${authorName}</td>
-        <td><button data-id=${post.id} class="button rounded btn-primary editPost">Edit</button></td>
-        <td><button data-id=${post.id} class="button rounded btn-danger deletePost">Delete</button></td>
+        `;
+        <!--Show these buttons on posts ONLY when user is author, or if user is admin-->
+        // if(isAuthor|| isAdmin) {
+        //
+        if(loggedInUser) {
+            if(loggedInUser.role === 'ADMIN' || loggedInUser.username)
+            postsHTML += `
+            <td><button data-id=${post.id} class="button rounded btn-primary editPost">Edit</button></td>
+            <td><button data-id=${post.id} class="button rounded btn-danger deletePost">Delete</button></td>
+        `;
+        }
+        postsHTML +=`
         </tr>`;
     }
     postsHTML += `</tbody></table>`;
@@ -87,6 +160,42 @@ export function postSetup() {
     savePostHandler();
     editPostHandlers();
     deletePostHandlers();
+    setupValidationHandlers()
+    validateFields();
+
+}
+
+function setupValidationHandlers() {
+    let input = document.querySelector("#title");
+    input.addEventListener("keyup", validateFields);
+    input = document.querySelector("#content");
+    input.addEventListener("keyup", validateFields);
+
+}
+
+function validateFields() {
+    let isValid = true;
+    let input = document.querySelector("#title");
+    if(input.value.trim().length < 1) {
+        input.classList.add("is-invalid");
+        input.classList.remove("is-valid");
+        isValid = false;
+    } else {
+        input.classList.add("is-valid");
+        input.classList.remove("is-invalid");
+    }
+    input = document.querySelector("#content");
+
+    if(input.value.trim().length < 1) {
+        input.classList.add("is-invalid");
+        input.classList.remove("is-valid");
+        isValid = false;
+    } else {
+        input.classList.add("is-valid");
+        input.classList.remove("is-invalid");
+    }
+
+    return isValid
 }
 
 
@@ -104,6 +213,11 @@ function savePostHandler() {
             const titleField = document.querySelector("#title");
             const contentField = document.querySelector("#content");
             const categoryField = document.querySelector("#category");
+
+            //HOLD ON: don't allow save if content is not valid
+            if(!validateFields()) {
+                return;
+            }
 
             //make the new/saved-edit post object
             const incomingPost = {

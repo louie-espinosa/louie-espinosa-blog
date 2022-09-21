@@ -8,6 +8,9 @@ import LoginEvent from "./auth.js";
 import Register from "./views/Register.js"
 import {RegisterEvent} from "./views/Register.js";
 import userScreenHTML, {prepareUserJS} from "./views/User.js";
+import Logout, {LogoutEvent} from "./views/Logout.js";
+import AboutMe from "./views/AboutMe.js";
+import FailedLogin, {FailedLoginEvent} from "./views/FailedLogin.js";
 /**
  * Returns the route object for a specific route based on the given URI
  * @param URI
@@ -27,6 +30,20 @@ export default function router(URI) {
             uri: '/login',
             title: "Login",
             viewEvent: LoginEvent
+        },
+        '/logout': {
+            returnView: Logout,
+            state: {},
+            uri: '/logout',
+            title: "Logout",
+            viewEvent: LogoutEvent
+        },
+        '/failedlogin': {
+            returnView: FailedLogin,
+            state: {},
+            uri: '/failedlogin',
+            title: "Login Failed",
+            viewEvent: FailedLoginEvent
         },
         '/register': {
             returnView: Register,
@@ -50,6 +67,12 @@ export default function router(URI) {
             state: {},
             uri: '/about',
             title: 'About',
+        },
+        '/me': {
+            returnView: AboutMe,
+            state: {},
+            uri: '/me',
+            title: 'About Me',
         },
         '/error': {
             returnView: Error404,
